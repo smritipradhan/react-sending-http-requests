@@ -193,8 +193,24 @@ Displaying all the conditions elegantly.
  ...
 
 <section>
-    {content}
+        {content}
 </section>
  ...
 
 ```
+
+#### Using useEffect for Requests
+
+At this point we are only fetching the data when the button is clicked.Now a lot of applications want to fetch the data when the component loads.We can use the useEffect hook because sending this https request is a side effect which ultimately changes our component state.And side effect should always go into the useEFfect.
+Having them inside a function is fine as long as we don't call this function as a part of our main component function because then we could create an infinite loop where we call the function,it updates the state, the component function re-renders or re-evaluated and the function is called again and again.
+
+```
+  useEffect(() => {
+    fetchMoviesHandler();
+  }, []);
+
+```
+Now we dont want to call it whenever to component is re-evaluated because that would be an infinite task.The best practice is to list all the dependencies. Now fetchMoviesHandler which is dependency to this effect.because if the fetchMoviesHandler function changes then this effect should be re-executed and this function could change if we would be using some external state here. The problem with that the functions are objects and therefore these function will technically change whenever the component re-renders.
+So, this will create an infinite loop. One solution is to omit it but it could result to subtle bugs if our function would be using some external state. 
+
+So, better solution would be to use the useCallback hook . We should add dependencies to the useCallback hook also but in this example but this function has no external dependencies.Now we ensure that the fetch movie handler is not created unnecessarily.
