@@ -28,3 +28,42 @@ https://swapi.dev/
 RestAPIs . 
 
 1. Sending a Get Request
+
+We will be using fetch which is built into the browser to send HTTP request to fetch and send data . By default in fetch the method is GET.The data is sent in a JSON format in which the keys are wrapped into double quotes.There are no methods and only data. It needs to be transformed into a javascript object.
+
+-------------------------------------------------------------------
+
+function fetchMoviesHandler(){
+    fetch('https://swapi.dev/api/films/').then(response=> {
+     return response.json();
+    }).then(data=>{
+      console.log(data?.results);
+    });
+}
+
+-------------------------------------------------------------------
+After transforming the json data to javascript object we return it and then we receive the data in another then block. As of now in the initial phase of the project we access the data of movies in a function in App.js file when we click on the Fetch Movies button.
+
+-------------------------------------------------------------------
+
+function fetchMoviesHandler(){
+    fetch('https://swapi.dev/api/films/').then(response=> {
+     return response.json();
+    }).then(data=>{
+
+      const transformedMovies = data?.results?.map(moviesData=>{
+        return {
+          id:moviesData?.episode_id,
+          title:moviesData?.title,
+          openingText:moviesData?.opening_crawl,
+          releaseDate : moviesData?.release_date,
+
+        }
+      })
+
+      setMovies(transformedMovies);
+    });
+  }
+
+  -------------------------------------------------------------------
+  We used episode_id , title , opening_crawl and release date from the response data object we received from the API.
