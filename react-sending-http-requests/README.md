@@ -222,3 +222,71 @@ In reality we want to send data to the server.In the star wars api we cant send 
 
 This has a dummy fields that we will be using to send the data . Checkout the next folder to actually connect to firebase and send a POST request to the database
 
+
+#### Sending POST Request
+
+folder - 06-sending-post-request
+
+We will be sending a POST Request . So the target of this section is to send data to the backend and then again fetch the same data of the movies and display it in the UI.
+
+We will be using fiebase to implement it . In the App.js we have the addMovieHandler() . 
+
+
+```
+  async function addMovieHandler(movie) {
+    console.log(movie);
+    const response = await fetch("https://react-post-call-default-rtdb.firebaseio.com/movies.json", {
+      method: "POST",
+      body: JSON.stringify(movie),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    console.log(data);
+  }
+
+```
+header describe the content which we send. And add try catch block to handle the errors.
+We get the data which is in the format of object. We convert and add the object to an array and integrate with the movies list .
+
+```
+
+  const fetchMoviesHandler = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        "https://react-post-call-default-rtdb.firebaseio.com/movies.json"
+      );
+      if (!response.ok) {
+        throw new Error("Something went wrong!");
+      }
+
+      const data = await response.json();
+      console.log(data);
+      const loadedMovies = [];
+      for(const key in data)
+      {
+        loadedMovies.push({
+          id:key,
+          title:data[key].title,
+          openingText: data[key].openingText,
+          releaseDate: data[key].releaseDate,
+        })
+      }
+      
+       setMovies(loadedMovies);
+    } catch (error) {
+      setError(error.message);
+    }
+    setIsLoading(false);
+  }, []);
+
+  ```
+
+  ## Credits
+
+  This is my first project on React . Hope this was helpful . To make most out of it clone the repository and run the application. Attached Readme file has notes related to the topics
+
+  Big Thanks to Maximillian's Course 
