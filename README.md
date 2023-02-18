@@ -221,3 +221,4 @@ folder- 05-preparing-the-project-for-the-next-steps
 In reality we want to send data to the server.In the star wars api we cant send the data as they dont want us to change the data.So we will be using another dummy api and service - firebase.It is a backend which comes togther with a database.Service offered by Google.No code need backend.
 
 This has a dummy fields that we will be using to send the data . Checkout the next folder to actually connect to firebase and send a POST request to the database
+
