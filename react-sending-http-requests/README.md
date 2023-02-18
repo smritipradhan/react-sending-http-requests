@@ -215,6 +215,38 @@ So, this will create an infinite loop. One solution is to omit it but it could r
 
 So, better solution would be to use the useCallback hook . We should add dependencies to the useCallback hook also but in this example but this function has no external dependencies.Now we ensure that the fetch movie handler is not created unnecessarily.
 
+```
+const fetchMoviesHandler = useCallback(async () => {
+    setIsLodaing(true);
+    setError(null);
+
+    try {
+      const response = await fetch("https://swapi.dev/api/films/");
+      // https://swapi.dev/api/films/ <-- correct
+      if (!response.ok) {
+        throw new Error("Something went wrong!");
+      }
+      const data = await response.json();
+
+      const transformedMovies = data?.results?.map((moviesData) => {
+        return {
+          id: moviesData?.episode_id,
+          title: moviesData?.title,
+          openingText: moviesData?.opening_crawl,
+          releaseDate: moviesData?.release_date,
+        };
+      });
+
+      setMovies(transformedMovies);
+      setIsLodaing(false);
+    } catch (error) {
+      setError(error.message);
+    }
+    setIsLodaing(false); //no matter success or failure we stop loading
+  });
+
+  ```
+
 #### Preparing Project for Next Step (Sending data)
 folder- 05-preparing-the-project-for-the-next-steps
 
