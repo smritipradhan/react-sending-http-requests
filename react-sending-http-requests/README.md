@@ -75,6 +75,126 @@ function fetchMoviesHandler(){
   We used episode_id , title , opening_crawl and release date from the response data object we received from the API.
 
 #### Using Async and Await
+folder - 02-async-await 
 
 Run npm i inside 02-async-await folder . You can find the code which uses async and await to handle promises.A promise is a placeholder object for the eventual result (or error) of an asynchronous operation.
 
+```
+  async function fetchMoviesHandler() {
+    const response = await fetch("https://swapi.dev/api/films/");
+    const data = await response.json();
+    const transformedMovies = data?.results?.map((moviesData) => {
+      return {
+        id: moviesData?.episode_id,
+        title: moviesData?.title,
+        openingText: moviesData?.opening_crawl,
+        releaseDate: moviesData?.release_date,
+      };
+    });
+
+    setMovies(transformedMovies);
+  }
+
+  ```
+
+  #### Handling Loading and Data States
+  folder - 02-async-await 
+
+  Dummy way to show different states based on the data we get . Replace the below code with a spinner or different loading Messages based on the Project requirements . 
+
+  1. We got no movies
+  2. We have movies
+  3. We are loading
+
+```
+  async function fetchMoviesHandler() {
+    setIsLodaing(true);
+    ....
+    ....
+    setIsLodaing(false);
+  }
+
+<section>
+        {isLoading && <p>Loading....</p>}
+        {!isLoading && movies?.length > 0 && <MoviesList movies={movies} />}
+        {!isLoading && movies?.length === 0 && <p>Found no movies </p>}
+ </section>
+
+ ```
+
+#### Handling HTTPS Errors
+
+
+List of Errors which we may encounter with the HTTP status codes
+https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+
+
+```
+const [error,setError] = useState(null);
+
+  async function fetchMoviesHandler() {
+    setIsLodaing(true);
+    setError(null);
+
+    try{
+      const response = await fetch("https://swapi.dev/api/film/"); //url mistaken
+      if(!response.ok) 
+      // Manually throwing errors using response.ok
+      {
+        throw new Error("Something went wrong!");
+      }
+      const data = await response.json();
+
+      const transformedMovies = data?.results?.map((moviesData) => {
+        return {
+          id: moviesData?.episode_id,
+          title: moviesData?.title,
+          openingText: moviesData?.opening_crawl,
+          releaseDate: moviesData?.release_date,
+        };
+      });
+  
+      setMovies(transformedMovies);
+      setIsLodaing(false);
+    }
+    catch(error)
+    {
+      setError(error.message);  // we catch the error here and set the error as error.message we received
+    }
+    setIsLodaing(false); //no matter success or failure we stop loading
+  }
+
+  .......
+  {!isLoading && movies?.length === 0 && !error&& <p>Found no movies </p>}
+  {!isLoading && error && <p>{error}</p>}
+  .......
+
+
+  ```
+
+
+Displaying all the conditions elegantly.
+
+```
+ let content = <p>Found no movies.</p>;
+
+  if (movies.length > 0) {
+    content = <MoviesList movies={movies} />;
+  }
+
+  if (error) {
+    content = <p>{error}</p>;
+  }
+
+  if (isLoading) {
+    content = <p>Loading...</p>;
+  }
+
+ ...
+
+<section>
+    {content}
+</section>
+ ...
+
+```

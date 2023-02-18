@@ -124,3 +124,77 @@ Run npm i inside 02-async-await folder . You can find the code which uses async 
 
 #### Handling HTTPS Errors
 
+
+List of Errors which we may encounter with the HTTP status codes
+https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+
+
+```
+const [error,setError] = useState(null);
+
+  async function fetchMoviesHandler() {
+    setIsLodaing(true);
+    setError(null);
+
+    try{
+      const response = await fetch("https://swapi.dev/api/film/"); //url mistaken
+      if(!response.ok) 
+      // Manually throwing errors using response.ok
+      {
+        throw new Error("Something went wrong!");
+      }
+      const data = await response.json();
+
+      const transformedMovies = data?.results?.map((moviesData) => {
+        return {
+          id: moviesData?.episode_id,
+          title: moviesData?.title,
+          openingText: moviesData?.opening_crawl,
+          releaseDate: moviesData?.release_date,
+        };
+      });
+  
+      setMovies(transformedMovies);
+      setIsLodaing(false);
+    }
+    catch(error)
+    {
+      setError(error.message);  // we catch the error here and set the error as error.message we received
+    }
+    setIsLodaing(false); //no matter success or failure we stop loading
+  }
+
+  .......
+  {!isLoading && movies?.length === 0 && !error&& <p>Found no movies </p>}
+  {!isLoading && error && <p>{error}</p>}
+  .......
+
+
+  ```
+
+
+Displaying all the conditions elegantly.
+
+```
+ let content = <p>Found no movies.</p>;
+
+  if (movies.length > 0) {
+    content = <MoviesList movies={movies} />;
+  }
+
+  if (error) {
+    content = <p>{error}</p>;
+  }
+
+  if (isLoading) {
+    content = <p>Loading...</p>;
+  }
+
+ ...
+
+<section>
+        {content}
+</section>
+ ...
+
+```
